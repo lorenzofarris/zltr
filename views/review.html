@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="/style.css">
+  <meta charset="utf-8">
+  <title>Review a flashcard</title>
+</head>
+
+<body>
+
+<div id="front">
+<div class="character" hidden></div>
+<div class="pinyin" hidden></div>
+<div class="english" hidden></div>
+<div id="check" hidden>
+  <form method="get" action="/fc/check">
+    <button type="submit" name="submit">Check my answer</button>
+  </form>
+</div>
+</div>
+<div id="back">
+<div class="character" hidden></div>
+<div class="pinyin" hidden></div>
+<div class="english" hidden></div>
+<div id="score" style="display:none;">
+  <form method="post" action="/fc/score">
+    <label for="score">How did you do?</label>
+    <select name="score">
+      <option value="0">Complete blackout</option>
+      <option value="1">Incorrect response, the correct one was remembered</option>
+      <option value="2">Incorrect response, where the correct one was easy to recall</option>
+      <option value="3">Correct response, recalled with serious difficulty</option>
+      <option value="4">Correct response after a hesitation</option>
+      <option value="5">Perfect response</option>
+    </select>
+    <button type="submit" name="submit">Submit</button>
+  </form>
+</div>
+</div>
+</body>
+</html>

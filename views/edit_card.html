@@ -1,0 +1,27 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Edit a flashcard</title>
+</head>
+
+<body>
+
+<div id="edit_card">
+<form method="post" action="/fc/update">
+<input type="hidden" name="index" value="0">
+<label for="simplified">Simplified Character</label>
+<input name="simplified" size="10">
+<label for="traditional">Traditional Character</label>
+<input name="traditional" size="10">
+<label for="pinyin">Pinyin</label>
+<input name="pinyin" size="20">
+<label for="english">English</label>
+<input name="english" size="64">
+<button type="submit" name="submit">Update card</button>
+</form>
+</div>
+<div id="results">
+</div>
+</body>
+</html>

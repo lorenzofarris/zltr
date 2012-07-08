@@ -1,0 +1,16 @@
+<!doctype html>
+%html
+  %head
+    %link{:href => "/style.css", :rel => "stylesheet"}/
+    %meta{:charset => "utf-8"}/
+    %title Lorenzo's Chinese Language Tool
+  %body
+    #lookup
+      %form{:action => "/cs", :method => "post"}
+        Search for simplified character:
+        %input{:maxlength => "1024", :name => "simplified", :size => "10", :type => "text"}/
+        %button{:name => "submit", :type => "submit"} Search
+    #results
+      %span#simplified=@line[:simplified]
+      %span#pinyin=@line[:pinyin]
+      %span#english=@line[:english]

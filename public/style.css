@@ -1,0 +1,42 @@
+body{
+font-family: Times New Roman,Times,serif; 
+}
+div#lookup
+{
+font-size: xx-large; 
+background-color: #00ffff; 
+}
+div#results
+{
+font-size: xx-large; 
+background-color: #80ff80;
+}
+div#add_to_deck
+{
+font-size: xx-large; 
+background-color: #80ff80;
+}
+span#simplified_character
+{
+font-size: 400%;
+}
+.character
+{
+font-size: 800%;
+}
+.pinyin
+{
+font-size: xx-large;
+}
+.english
+{
+font-size: xx-large;
+}
+.simp
+{
+font-size: 400%;
+}
+.trad
+{
+font-size: 400%;
+}

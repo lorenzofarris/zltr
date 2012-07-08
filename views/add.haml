@@ -1,0 +1,23 @@
+%html
+  %head
+    %link{:href => "style.css", :rel => "stylesheet", :type => "text/css"}/
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "content-type"}/
+    %title Add Chinese to Review
+  %body
+    #lookup
+      %form{:action => "/csa", :method => "post"}
+        Search by simplified character:
+        %input{:maxlength => "1024", :name => "simplified", :size => "10", :type => "text"}/
+        %button{:name => "submit", :type => "submit"} Search
+    #add_to_deck
+      %form{:action => "/fc/add", :method => "post"}
+        %label{:for => "simplified"} Simplified Character
+        %input{:name => "simplified", :size => "10"}/
+        %label{:for => "traditional"} Traditional Character
+        %input{:name => "traditional", :size => "10"}/
+        %label{:for => "pinyin"} Pinyin
+        %input{:name => "pinyin", :size => "20"}/
+        %label{:for => "english"} English
+        %input{:name => "english", :size => "32"}/
+        %button{:name => "submit", :type => "submit"} Add it to deck
+    #results

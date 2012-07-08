@@ -1,0 +1,28 @@
+!!!
+%html
+  %head
+    %link(rel="stylesheet" href="/style.css")
+    %meta(charset="utf-8")
+    %title Chinese Language Learning Tool
+  %body
+    #message
+    #links
+      %table
+        %tr
+          %form(method="POST" action="/cs")
+            %td 
+              %label(for="simplified")Search for a simplified character
+            %td
+              %input(type="text" name="simplified" size="10")
+            %td
+              %button(type="submit" name="submit")Search
+        %tr
+          %td(colspan="3")
+            %a(href="/fc")List flash cards
+        %tr
+          %td(colspan="3")
+            %a(href="/add")Add a flashcard
+        %tr
+          %td(colspan="3")
+            %a(href="/fc/review")Test flashcards that are due for review.
+    #notification
