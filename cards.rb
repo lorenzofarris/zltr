@@ -3,6 +3,7 @@ require 'rubygems'
 require 'sinatra'
 require 'Haml'
 require 'sequel'
+require 'Nokogiri'
 
 DB=Sequel.sqlite('resources/zltdb')
 Sequel.datetime_class = DateTime
@@ -23,6 +24,12 @@ end
 
 get '/add' do
   haml :add
+end
+
+post '/csa' do
+  @doc = Nokogiri::HTML::DocumentFragment.parse(haml(:add))
+  
+  @doc.to_html
 end
 
 post '/cs' do
