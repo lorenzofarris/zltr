@@ -1,0 +1,13 @@
+%html
+  %head
+    %link{:href => "/style.css", :rel => "stylesheet", :type => "text/css"}/
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "content-type"}/
+    %title Confirm Card Delete
+  %body
+    #card
+      %span#simplified.character _
+      %span#traditional.character _
+      %span#pinyin.pinyin pinyin
+      %span#english.pinyin english
+      %span#delete_url
+        %a#delete_url{:href => "/fc/delete/0"} Delete this card

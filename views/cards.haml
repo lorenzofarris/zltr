@@ -1,0 +1,22 @@
+%html
+  %head
+    %link{:href => "/style.css", :rel => "stylesheet", :type => "text/css"}/
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "content-type"}/
+    %title Chinese Flashcards
+  %body
+    #cards
+      %table{:border => "1"}
+        %tr.headings
+          %th Traditional
+          %th Simplified
+          %th Pinyin
+          %th English
+        %tr.card_row
+          %td.simplified
+          %td.traditional
+          %td.pinyin
+          %td.english
+          %td.index
+            %a{:href => "/fc/edit/0"} Edit this card
+          %td.delete
+            %a{:href => "/fc/delete-confirm/0"} Delete this card

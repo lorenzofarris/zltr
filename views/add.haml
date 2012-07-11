@@ -12,12 +12,15 @@
     #add_to_deck
       %form{:action => "/fc/add", :method => "post"}
         %label{:for => "simplified"} Simplified Character
-        %input{:name => "simplified", :size => "10"}/
+        %input{:name => "simplified", :size => "10", :class=>'character'}/
+        %br
         %label{:for => "traditional"} Traditional Character
-        %input{:name => "traditional", :size => "10"}/
+        %input{:name => "traditional", :size => "10", :class=>'character'}/
+        %br
         %label{:for => "pinyin"} Pinyin
-        %input{:name => "pinyin", :size => "20"}/
+        %input{:name => "pinyin", :size => "20", :class=>'pinyin'}/
+        %br
         %label{:for => "english"} English
-        %input{:name => "english", :size => "32"}/
+        %input{:name => "english", :size => "128", :class=>'english'}/
         %button{:name => "submit", :type => "submit"} Add it to deck
     #results

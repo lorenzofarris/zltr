@@ -1,5 +1,5 @@
 body{
-font-family: Times New Roman,Times,serif; 
+font-family: GungSeo,PMingLiU,MingLiU,Times New Roman,Times,serif; 
 }
 div#lookup
 {
@@ -18,11 +18,11 @@ background-color: #80ff80;
 }
 span#simplified_character
 {
-font-size: 400%;
+font-size: 300%;
 }
 .character
 {
-font-size: 800%;
+font-size: 300%;
 }
 .pinyin
 {
@@ -34,9 +34,16 @@ font-size: xx-large;
 }
 .simp
 {
-font-size: 400%;
+font-size: 300%;
 }
 .trad
 {
-font-size: 400%;
+font-size: 300%;
+}.simplified
+{
+font-size: 300%;
+}
+.traditional
+{
+font-size: 300%;
 }

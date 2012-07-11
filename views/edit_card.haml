@@ -1,0 +1,19 @@
+%html
+  %head
+    %link{:href => "style.css", :rel => "stylesheet", :type => "text/css"}/
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "content-type"}/
+    %title Edit a flashcard
+  %body
+    #edit_card
+      %form{:action => "/fc/update", :method => "post"}
+        %input{:name => "index", :type => "hidden", :value => "0"}/
+        %label{:for => "simplified"} Simplified Character
+        %input{:name => "simplified", :size => "10"}/
+        %label{:for => "traditional"} Traditional Character
+        %input{:name => "traditional", :size => "10"}/
+        %label{:for => "pinyin"} Pinyin
+        %input{:name => "pinyin", :size => "20"}/
+        %label{:for => "english"} English
+        %input{:name => "english", :size => "64"}/
+        %button{:name => "submit", :type => "submit"} Update card
+    #results
