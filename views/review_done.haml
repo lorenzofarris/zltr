@@ -1,0 +1,15 @@
+<!doctype html>
+%html
+  %head
+    %link{:href => "/style.css", :rel => "stylesheet"}/
+    %meta{:charset => "utf-8"}/
+    %title Review Complete!
+  %body
+    #message
+      You have completed your review. Would you like to 
+      %ul
+        %li 
+          %a(href="/fc/review") Start another review?
+        %li
+          %a(href="/") Return to the main page?
+  

@@ -1,5 +1,5 @@
 #require 'rubygems'
-require 'Haml'
+#require 'Haml'
 require 'sinatra/base'
 require 'cards'
 
@@ -37,6 +37,7 @@ class ZltApp <  Sinatra::Base
   post "/fc/add" do
     "adding flashcard"
     add_flashcard(params)
+    session.delete(:deck)
     list_all_cards(haml(:cards))
   end
 
@@ -46,6 +47,7 @@ class ZltApp <  Sinatra::Base
   
   post "/fc/update" do
     update_card(params)
+    session.delete(:deck)
     list_all_cards(haml(:cards))
   end
   
@@ -58,4 +60,48 @@ class ZltApp <  Sinatra::Base
     delete_card(params[:id])
     list_all_cards(haml(:cards))
   end
+  
+  get "/fc/review" do
+    # get a review deck, if I haven't got one
+    unless session.key?(:deck) 
+      deck=Deck.new(20)
+      session[:deck]=deck.to_json
+    else
+      deck=Deck.json_create(session[:deck])
+    end
+    card=deck.current_card
+    render_card_review_front(card,haml(:review))
+  end
+  
+  get "/fc/check" do
+    unless session.key?(:deck) && session[:deck].length > 0
+      redirect to('/fc/review')
+    end
+    deck=Deck.json_create(session[:deck])
+    card=deck.current_card
+    render_card_review_full(card,haml(:review))
+  end
+   
+  post "/fc/score" do
+    unless session.key?(:deck) && session[:deck].length > 0
+      redirect to('/fc/review')
+    end
+    deck=Deck.json_create(session[:deck])
+    card=deck.current_card
+    score = params[:score].to_i
+    if score < 4
+      deck.repeat_card
+    else
+      record_score(score, card)
+      deck.return_card_to_box
+      session[:deck]=deck.to_json()
+    end
+    if deck.length == 0
+      haml :review_done
+    else
+      card=deck.current_card
+      render_card_review_full(card,haml(:review))
+    end
+  end
+  
 end

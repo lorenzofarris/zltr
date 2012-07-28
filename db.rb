@@ -1,7 +1,6 @@
 # db.rb
 # Sets up the database for the app
-#require 'sequel'
-require 'rubygems'
+
 require 'sequel'
 
 DB=Sequel.sqlite('resources/zltdb')
@@ -29,6 +28,8 @@ def create_flashcards_table
     Datetime :chinese_due
     Float :english_ef
     Float :chinese_ef
+    Integer :english_interval
+    Integer :chinese_interval
   end
 end
 
@@ -67,4 +68,11 @@ def load_cedict
       end
     end
   end
+end
+
+def build_new_db
+  create_cedict_table
+  create_flashcards_table
+  create_card_tries
+  load_cedict
 end

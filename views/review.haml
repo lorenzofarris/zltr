@@ -1,0 +1,29 @@
+<!doctype html>
+%html
+  %head
+    %link{:href => "/style.css", :rel => "stylesheet"}/
+    %meta{:charset => "utf-8"}/
+    %title Review a flashcard
+  %body
+    #front
+      .character{:hidden => ""}
+      .pinyin{:hidden => ""}
+      .english{:hidden => ""}
+      #check{:hidden => ""}
+        %form{:action => "/fc/check", :method => "get"}
+          %button{:name => "submit", :type => "submit"} Check my answer
+    #back
+      .character{:hidden => ""}
+      .pinyin{:hidden => ""}
+      .english{:hidden => ""}
+      #score{:hidden => ""}
+        %form{:action => "/fc/score", :method => "post"}
+          %label{:for => "score"} How did you do?
+          %select{:name => "score"}
+            %option{:value => "0"} Complete blackout
+            %option{:value => "1"} Incorrect response, the correct one was remembered
+            %option{:value => "2"} Incorrect response, where the correct one was easy to recall
+            %option{:value => "3"} Correct response, recalled with serious difficulty
+            %option{:value => "4"} Correct response after a hesitation
+            %option{:value => "5"} Perfect response
+          %button{:name => "submit", :type => "submit"} Submit
