@@ -9,6 +9,7 @@ class ZltApp <  Sinatra::Base
   set :method_override, true
   set :inline_templates, true
   set :static, true
+
   get '/hi' do
     "Hello, World!"
   end
@@ -27,6 +28,12 @@ class ZltApp <  Sinatra::Base
   
   post '/cs' do
     @line=search_simplified(params[:simplified])
+    @message=""
+    $stderr.puts "line is #{@line}"
+    if @line.nil? || @line.length > 0
+      @line={:simplified=>'', :pinyin=>'', :english=>''}
+      @message="Character #{params[:simplified]} not found."
+    end
     haml :cs
   end
   # list the flashcards

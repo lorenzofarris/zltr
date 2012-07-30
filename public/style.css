@@ -1,10 +1,19 @@
 body{
 font-family: GungSeo,PMingLiU,MingLiU,Times New Roman,Times,serif; 
 }
+tr:nth-child(odd)
+{
+background-color: #addfff;
+}
+tr:nth-child(even)
+{
+background-color: #bdedff;
+}
 div#lookup
 {
-font-size: xx-large; 
-background-color: #00ffff; 
+font-size: large; 
+border: thin solid black;
+background-color: #bdedff;
 }
 div#results
 {
@@ -13,8 +22,9 @@ background-color: #80ff80;
 }
 div#add_to_deck
 {
-font-size: xx-large; 
-background-color: #80ff80;
+font-size: large; 
+border: thin solid black;
+background-color: #addfff;
 }
 span#simplified_character
 {
