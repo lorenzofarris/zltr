@@ -1,6 +1,7 @@
 #require 'rubygems'
 #require 'Haml'
 require 'sinatra/base'
+require 'yaml'
 require 'cards'
 
 class ZltApp <  Sinatra::Base
@@ -9,6 +10,20 @@ class ZltApp <  Sinatra::Base
   set :method_override, true
   set :inline_templates, true
   set :static, true
+  
+  @db=nil
+  
+  def initialize
+    super
+    # get configuration
+    config = YAML::load(File.open('config.yaml'))
+    unless config.key?('database') && File.readable?(config['database'])
+      @db = config['database']
+    else
+      @db = 'resources/zltdb'
+    end
+    $stderr.puts "database is #{@db}"
+  end
 
   get '/hi' do
     "Hello, World!"
