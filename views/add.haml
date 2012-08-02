@@ -9,6 +9,26 @@
         Search by simplified character:
         %input{:class=>"character", :maxlength => "1024", :name => "simplified", :size => "10", :type => "text"}/
         %button{:name => "submit", :type => "submit"} Search
+    #choices{:hidden => ""}
+      Choose one of these entries to prepopulate the flashcard fields
+      %table    
+        %tr
+          %th Traditional Character
+          %th Simplified Character
+          %th Pinyin
+          %th English
+        %tr.data
+          %td.traditional
+          %td.simplified
+          %td.pinyin
+          %td.english
+          %td.index 
+            %form{:action => "/csa", :method => "post"}
+              %input{:type => "hidden", :name=> "traditional", :class=>"traditional"}
+              %input{:type => "hidden", :name=> "simplified", :class => "simplified"}
+              %input{:type => "hidden", :name=> "pinyin", :class => "pinyin"}
+              %input{:type => "hidden", :name => "english", :class => "english"}
+              %button{:type => "submit"} Select          
     #add_to_deck
       %form{:action => "/fc/add", :method => "post"}
         %table{:width=>"100%"}

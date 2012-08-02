@@ -4,6 +4,7 @@ require 'sequel'
 require 'Nokogiri'
 require 'json'
 require 'date'
+require 'stringio'
 
 DB=Sequel.sqlite('resources/zltdb')
 Sequel.datetime_class = DateTime
@@ -48,8 +49,9 @@ end
 
 class CardDB
   
-  def initialize(resource_string)
+  def initialize(resource_string='sqlite://resources/zltdb')
     Sequel.datetime_class = DateTime
+    $stderr.puts "resource string is #{resource_string}"
     @db = Sequel.connect(resource_string)
   end 
   def new_db(cedict_path="resources/cedict_1_0_ts_utf-8_mdbg.txt")
@@ -124,10 +126,30 @@ class CardDB
 
   def search_simplified(simplified_character)
     #"your character is #{simplified_character}"
-    entries=@db[:cedict]
-    entries.first(:simplified=>simplified_character)
+    entries=@db[:cedict].where(:simplified=>simplified_character).all
   end
 
+  def export_cards(file="")
+    buffer=""
+    output=StringIO.open(buffer,"w")
+    @db[:cards].each do |card|
+      if /^\/.*\/$/ =~  card[:english]
+        english = "#{card[:english]}"
+      else
+        english = "/#{card[:english]}/"
+      end 
+      output.puts "#{card[:traditional]} #{card[:simplified]} [#{card[:pinyin]}] #{english}\n"
+      #output.puts "#{card[:english]}\n" if /^\/.*\/$/=~card[:english]
+      #output.puts "#{english}\n"
+    end
+    unless file==""
+      output=File.open(file,"w")
+      output.puts(buffer)
+    end
+    buffer
+  end
+
+  
   def record_score(score, wrapped_card)
     card = wrapped_card[:card]
     # calculate ease-factor
@@ -297,8 +319,8 @@ class CardDB
       else
         first_row_flag=false
       end
-      current_row.at_css("td.simplified").content=card[:simplified]
       current_row.at_css("td.traditional").content=card[:traditional]
+      current_row.at_css("td.simplified").content=card[:simplified]
       current_row.at_css("td.pinyin").content=card[:pinyin]
       current_row.at_css("td.english").content=card[:english]
       a1 = current_row.at_css("td.index a")
@@ -357,23 +379,80 @@ class CardDB
     cards=DB[:cards].filter(:id=>id).delete
   end
   
-  def inject_cedict_into_addcard (doc, character)
-    @doc = Nokogiri::XML::Document.parse(doc)
-    @cd_entry = search_simplified(character)
-    unless @cd_entry.nil? || @cd_entry.length < 1
-      @simplified_input = @doc.at_css 'div#add_to_deck input[name="simplified"]'
-      @simplified_input['value']=@cd_entry[:simplified]
-      @traditional_input = @doc.at_css 'div#add_to_deck input[name="traditional"]'
-      @traditional_input['value']=@cd_entry[:traditional]
-      @pinyin_input=@doc.at_css 'div#add_to_deck input[name="pinyin"]' 
-      @pinyin_input['value']=@cd_entry[:pinyin]
-      @english_input=@doc.at_css 'div#add_to_deck textarea[name="english"]'
-      @english_input.content=@cd_entry[:english]
+  def render_cedict_choices(htmldoc, params)
+    doc = Nokogiri::XML::Document.parse(htmldoc)
+    # if I've got only the simplified character parameter set,
+    # I need to do a lookup, otherwise I've already got all
+    # I need from the cedict database
+    if params.key?('english')
+      inject_cedict_into_addcard(doc, params)
     else
-      @results=@doc.at_css "div#results"
-      @results.content="Character #{character} not found."
+      entries = search_simplified(params[:simplified])
+      if entries.nil? or entries.length==0 
+        results=doc.at_css "div#results"
+        results.content="Character #{params[:simplified]} not found."
+      elsif entries.length==1
+        $stderr.puts entries[0]
+        inject_cedict_into_addcard(doc, entries[0])
+      else
+        choices = doc.at_css "div#choices"
+        choices.delete("hidden") if choices.key?("hidden")
+        row=choices.at_css "tr.data"
+        # I really want a "do-while" here
+        next_row=nil
+        first_row=true
+        entries.each do |entry|
+          unless first_row
+            next_row = row.dup()
+            row.add_next_sibling next_row
+            row = next_row
+          else
+            first_row=false
+          end
+          traditional=row.at_css "td.traditional"
+          traditional.content = entry[:traditional]
+          simplified=row.at_css "td.simplified"
+          simplified.content = entry[:simplified]
+          pinyin=row.at_css "td.pinyin"
+          pinyin.content = entry[:pinyin]
+          english=row.at_css "td.english"
+          english.content = entry[:english]
+          form_input = row.at_css "input.traditional"
+          form_input['value']=entry[:traditional]
+          form_input = row.at_css "input.simplified"
+          form_input['value']=entry[:simplified]
+          form_input = row.at_css "input.pinyin"
+          form_input['value']=entry[:pinyin]
+          form_input = row.at_css "input.english"
+          form_input['value']=entry[:english]         
+        end
+      end
     end 
-    @doc.to_html
+    doc.to_html    
+  end
+  
+  def inject_cedict_into_addcard (doc, params)
+    #$stderr.puts "params is #{params}"
+    #doc = Nokogiri::XML::Document.parse(htmldoc)
+    unless params.nil? || params.length < 1
+      #$stderr.puts "building my form"
+      simplified_input = doc.at_css 'div#add_to_deck input[name="simplified"]'
+      #$stderr.puts "simplfied = #{params[:simplified]}"
+      simplified_input['value']=params[:simplified]
+      #$stderr.puts simplified_input.to_html
+      traditional_input = doc.at_css 'div#add_to_deck input[name="traditional"]'
+      traditional_input['value']=params[:traditional]
+      pinyin_input=doc.at_css 'div#add_to_deck input[name="pinyin"]' 
+      pinyin_input['value']=params[:pinyin]
+      english_input=doc.at_css 'div#add_to_deck textarea[name="english"]'
+      english_input.content=params[:english]
+      snippet = doc.at_css 'div#add_to_deck'
+      #$stderr.puts snippet.to_html
+    else
+      results=doc.at_css "div#results"
+      results.content="Character #{params[:simplified]} not found."
+    end 
+    doc
   end
 
 end
@@ -470,7 +549,6 @@ def search_simplified(simplified_character)
   entries.first(:simplified=>simplified_character)
 end
 
-# TODO: test out writing date to an in memory database in the irb
 def add_flashcard(mapp)
   cards=DB[:cards]
   cards.insert(:traditional=>mapp['traditional'],

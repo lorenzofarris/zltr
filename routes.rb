@@ -12,6 +12,7 @@ class ZltApp <  Sinatra::Base
   set :static, true
   
   @db=nil
+  @cards=nil
   
   def initialize
     super
@@ -23,6 +24,7 @@ class ZltApp <  Sinatra::Base
       @db = 'resources/zltdb'
     end
     $stderr.puts "database is #{@db}"
+    @cards=CardDB.new(@db)
   end
 
   get '/hi' do
@@ -38,7 +40,8 @@ class ZltApp <  Sinatra::Base
   end
   
   post '/csa' do
-    inject_cedict_into_addcard((haml(:add)), params[:simplified])
+    #inject_cedict_into_addcard((haml(:add)), params[:simplified])
+    @cards.render_cedict_choices(haml(:add), params)
   end
   
   post '/cs' do
