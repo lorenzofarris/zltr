@@ -329,7 +329,7 @@ class CardDB
   end
   
   def self.render_card_review_front(html)
-    $stderr.puts "in render_card_review_front"
+    #$stderr.puts "in render_card_review_front"
     doc=render_card_review(html)
     check_form=doc.at_css("#check")
     check_form.delete('hidden') if check_form.key?('hidden')
