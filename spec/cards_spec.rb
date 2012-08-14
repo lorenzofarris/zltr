@@ -14,6 +14,21 @@ describe CardDB do
     end
   end
   
+  describe '#add_flashcard' do
+    it "adds a new flashcard, and memorization metadata" do
+      p={"simplified"=>"一", 
+         "pinyin"=>"yi1", 
+         "traditional"=>"一", 
+         "english"=>"/one/1/single/a (article)/as soon as/entire/whole/all/throughout/"}
+      @carddb.add_flashcard(p)
+      c=Card.filter(:simplified=>p["simplified"]).all()[0]
+      c.simplified.should == p['simplified']
+      m=c.card_memo
+      m[0][:card_id].should == c.pk
+      m[1][:card_id].should == c.pk
+    end
+  end
+  
   describe '#import_deck' do
     it "loads new cards from a cedict style file" do
       
