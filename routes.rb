@@ -11,24 +11,10 @@ class ZltApp <  Sinatra::Base
   set :inline_templates, true
   set :static, true
   
-  @db=nil
-  @cards=nil
-  @deck=nil
-  
-  def initialize
-    super
-    # get configuration
-    #config = YAML::load(File.open('config.yaml'))
-    #unless config.key?('database') && File.readable?(config['database'])
-    #  @db = config['database']
-    #else
-    #  @db = 'resources/zltdb'
-    #end
-    #$stderr.puts "database is #{@db}"
-    #@cards=CardDB.new(@db)
-    @cards = CardDB.new
+  before do
+    $stderr.puts "path_info: #{request.path_info}"
   end
-
+ 
   get '/hi' do
     "Hello, World!"
   end

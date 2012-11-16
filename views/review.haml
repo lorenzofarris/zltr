@@ -1,7 +1,7 @@
 <!doctype html>
 %html
   %head
-    %link{:href => "/style.css", :rel => "stylesheet"}/
+    %link{:href => url("/style.css"), :rel => "stylesheet"}/
     %meta{:charset => "utf-8"}/
     %title Review a flashcard
   %body
@@ -10,14 +10,14 @@
       .pinyin{:hidden => ""}
       .english{:hidden => ""}
       #check{:hidden => ""}
-        %form{:action => "/fc/check", :method => "get"}
+        %form{:action => url("/fc/check"), :method => "get"}
           %button{:name => "submit", :type => "submit"} Check my answer
     #back
       .character{:hidden => ""}
       .pinyin{:hidden => ""}
       .english{:hidden => ""}
       #score{:hidden => ""}
-        %form{:action => "/fc/score", :method => "post"}
+        %form{:action => url("/fc/score"), :method => "post"}
           %label{:for => "score"} How did you do?
           %select{:name => "score"}
             %option{:value => "0"} Complete blackout
