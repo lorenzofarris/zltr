@@ -2,7 +2,7 @@
 #require 'Haml'
 require 'sinatra/base'
 #require 'yaml'
-require 'cards'
+require './cards'
 
 class ZltApp <  Sinatra::Base
   set :logging,true
@@ -13,6 +13,7 @@ class ZltApp <  Sinatra::Base
   
   before do
     $stderr.puts "path_info: #{request.path_info}"
+    $stderr.puts "url: " + url("/")
   end
  
   get '/hi' do
@@ -45,13 +46,13 @@ class ZltApp <  Sinatra::Base
 
   # list the flashcards
   get "/fc" do
-    CardDB.list_all_cards(haml(:cards))
+    CardDB.list_all_cards(haml(:cards), url("/fc"))
   end
   
   post "/fc/add" do
     "adding flashcard"
     CardDB.add_flashcard(params)
-    CardDB.list_all_cards(haml(:cards))
+    CardDB.list_all_cards(haml(:cards),url("/fc"))
   end
 
   get "/fc/edit/:id" do
@@ -60,7 +61,7 @@ class ZltApp <  Sinatra::Base
   
   post "/fc/update" do
     CardDB.update_card(params)
-    CardDB.list_all_cards(haml(:cards))
+    CardDB.list_all_cards(haml(:cards),url("/fc"))
   end
   
   get "/fc/delete-confirm/:id" do
@@ -70,7 +71,7 @@ class ZltApp <  Sinatra::Base
   
   get "/fc/delete/:id" do
     CardDB.delete_card(params[:id])
-    CardDB.list_all_cards(haml(:cards))
+    CardDB.list_all_cards(haml(:cards),url("/fc"))
   end
   
   get "/fc/review" do

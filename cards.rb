@@ -1,10 +1,11 @@
 #!/usr/bin/ruby
 
 require 'sequel'
-require 'Nokogiri'
+require 'nokogiri'
 require 'json'
 require 'date'
 require 'stringio'
+require 'sinatra/base'
 
 DB=Sequel.sqlite('resources/zltdb')
 Sequel.datetime_class = DateTime
@@ -71,7 +72,6 @@ class CardDB
     load_cedict(cedict_path)
   end
   
-
   def create_cedict_table
     DB.create_table :cedict do
       primary_key :id
@@ -93,7 +93,6 @@ class CardDB
     end
   end
   
-
   def self.create_flashcard_memo_table
     DB.create_table :card_memo do
       primary_key :id
@@ -214,8 +213,7 @@ class CardDB
       record_score(score)
     end
   end
-    
-    
+        
   def self.record_score(score)
     rcard=ReviewCard.first
     card_memo=rcard.card_memo
@@ -233,8 +231,6 @@ class CardDB
     ReviewCard.all.length
   end
   
-  
-  
   def self.new_interval
     # assume ease factor has already been updated
     # update the repetition interval in days for the card
@@ -248,8 +244,6 @@ class CardDB
     card_memo.save
   end   
   
-  
-  
   def self.new_ef(score, card_memo)
     # calculated values from supermemo2 algorithm
     # score should be from 1 to 5
@@ -259,8 +253,6 @@ class CardDB
     card_memo.ef = new_ef < 1.3 ? 1.3 : new_ef
     card_memo.save
   end
-  
-  
   
   def self.get_cards_due(number=20)
       cards=CardMemo.order(:due).limit(number).all
@@ -336,8 +328,6 @@ class CardDB
     doc.to_html
   end
   
-  
-
   def self.render_card_review_full(html)
     rcards=ReviewCard.all
     if rcards.length==0
@@ -365,10 +355,11 @@ class CardDB
     doc.to_html
   end
   
- 
-  def self.list_all_cards(html_doc)
-    #$stderr.puts(html_doc)
-    doc = Nokogiri::XML::Document.parse(html_doc)
+  def self.list_all_cards(html_doc, root_url)
+    # $stderr.puts(html_doc)
+    $stderr.puts("root_url=#{root_url}")
+    doc = Nokogiri::HTML::Document.parse(html_doc)
+    $stderr.puts("parsed and re-rendered: #{doc.to_html}")
     current_row = doc.at_css("tr.card_row")
     last_row=current_row
     first_row_flag=true
@@ -385,19 +376,19 @@ class CardDB
       current_row.at_css("td.pinyin").content=card[:pinyin]
       current_row.at_css("td.english").content=card[:english]
       a1 = current_row.at_css("td.index a")
-      a1['href']="/fc/edit/#{card[:id]}"
+      a1['href']= root_url + "/edit/#{card[:id]}"
       a1.content="Edit"
       a2 = current_row.at_css("td.delete a")
-      a2['href']="/fc/delete-confirm/#{card[:id]}"
+      a2['href']= root_url + "/delete-confirm/#{card[:id]}"
       a2.content="Delete"
       last_row=current_row
     end
+    $stderr.puts doc.to_html
     doc.to_html
   end
   
-  
   def self.edit_card(html_doc, id)
-    doc = Nokogiri::XML::Document.parse(html_doc)
+    doc = Nokogiri::HTML::Document.parse(html_doc)
     zindex = doc.at_css("input[name='index']")
     zindex['value']=id
     cards =DB[:cards]
@@ -412,8 +403,7 @@ class CardDB
     english['value']=card[:english]
     doc.to_html
   end
-  
-  
+   
   def self.update_card(params)
     card=Card[params[:index]]
     card.traditional=params['traditional']
@@ -422,10 +412,9 @@ class CardDB
     card.english=params['english']
     card.save
   end
-  
-
+ 
   def self.delete_confirm(html_doc, id)
-    doc = Nokogiri::XML::Document.parse(html_doc)
+    doc = Nokogiri::HTML::Document.parse(html_doc)
     card=Card[id]
     simplified=doc.at_css("span#simplified")
     simplified.content=card[:simplified]
@@ -440,14 +429,14 @@ class CardDB
     doc.to_html
   end
   
-  
   def self.delete_card(id)
     card=Card[id]
+    card.remove_all_card_memo
     card.delete
   end
   
   def self.render_cedict_choices(htmldoc, params)
-    doc = Nokogiri::XML::Document.parse(htmldoc)
+    doc = Nokogiri::HTML::Document.parse(htmldoc)
     # if I've got only the simplified character parameter set,
     # I need to do a lookup, otherwise I've already got all
     # I need from the cedict database
@@ -496,12 +485,11 @@ class CardDB
       end
     end 
     doc.to_html    
-  end
-  
+  end  
 
   def self.inject_cedict_into_addcard (doc, params)
     #$stderr.puts "params is #{params}"
-    #doc = Nokogiri::XML::Document.parse(htmldoc)
+    #doc = Nokogiri::HTML::Document.parse(htmldoc)
     unless params.nil? || params.length < 1
       #$stderr.puts "building my form"
       simplified_input = doc.at_css 'div#add_to_deck input[name="simplified"]'
@@ -532,7 +520,6 @@ class CardDB
 
 end
 
-
 def record_score(score, wrapped_card)
   card = wrapped_card[:card]
   # calculate ease-factor
@@ -554,7 +541,6 @@ def record_score(score, wrapped_card)
                :q => score)
 end
 
-
 def new_interval(wrapped_card)
   # assume ease factor has already been updated
   # update the repetition interval in days for the card
@@ -575,7 +561,6 @@ def new_interval(wrapped_card)
     card[:english_due]= card[:english_due]+new_interval
   end
 end
-
 
 def new_ef(score, wrapped_card)
   # calculated values from supermemo2 algorithm
@@ -785,7 +770,6 @@ def inject_cedict_into_addcard (doc, character)
   end 
   @doc.to_html
 end
-
 
 class Card < Sequel::Model
   one_to_many :card_memo

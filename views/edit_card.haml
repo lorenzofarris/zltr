@@ -1,11 +1,11 @@
 %html
   %head
-    %link{:href => "/style.css", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => url("/style.css"), :rel => "stylesheet", :type => "text/css"}/
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "content-type"}/
     %title Edit a flashcard
   %body
     #edit_card
-      %form{:action => "/fc/update", :method => "post"}
+      %form{:action => url("/fc/update"), :method => "post"}
         %table
           %tr
             %td         
